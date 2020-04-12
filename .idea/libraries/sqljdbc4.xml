@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="sqljdbc4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/sqljdbc4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/poi-3.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.mail-1.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/activation.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
