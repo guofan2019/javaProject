@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
@@ -60,7 +61,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import com.sun.mail.util.MailSSLSocketFactory;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -69,9 +70,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+
+import com.sun.mail.util.MailSSLSocketFactory;
 public class activity {
-    public static String xlsUrl="";
-    public static String pictureUrl="";
+    public static String xlsUrl="测试同步！";
+    public static String pictureUrl="D:\\Desktop\\发送邮件\\新建位图图像.bmp";
     public static String sendEamil= "guofan@accbio.com.cn,664130988@qq.com";
     public static String myEamil= "guofan@accbio.com.cn";
     public static String EamilTitle= "";
@@ -90,9 +93,9 @@ public class activity {
     public static String currentDate,currentDate1;
     public static List<String[]> src;
     public static SimpleDateFormat format,format1;
-    public static void main( String [] s)
-    {
+    public static void main(String[] args) {
         initActivity();
+
     }
     //初始化界面
     public static void  initActivity(){
@@ -190,7 +193,7 @@ public class activity {
         //要发送的表名
         JLabel SqlTable=new JLabel("<html><body><p align=\"center\">数据库表名<br/>Excel sheet名<br/>格式：表名,sheet名;</p></body></html>");
         group2.add(SqlTable);
-        SqlTable.setBounds(10, 150, 80, 60);
+        SqlTable.setBounds(10, 150, 80, 90);
         group2.add(TvSqlTab);
         TvSqlTab.setLineWrap(true);
         TvSqlTab.setBounds(100, 145, 300, 90);
@@ -754,6 +757,23 @@ public class activity {
         String[] child=new String[2];
         //%号处理函数
         NumberFormat nf=NumberFormat.getPercentInstance();
+        //创建会计格式
+        HSSFCellStyle cellStyle = book.createCellStyle();
+        HSSFDataFormat format= book.createDataFormat();
+        cellStyle.setDataFormat(format.getFormat("_ ¥* #,##0.00_ ;_ ¥* -#,##0.00_ ;_ ¥* \"-\"??_ ;_ @_ "));
+        //设置为文本
+        HSSFCellStyle cellStyleText = book.createCellStyle();
+        HSSFDataFormat format2= book.createDataFormat();
+        cellStyleText.setDataFormat(format2.getFormat("@"));
+        //设置为数值
+        HSSFCellStyle cellStyleInt = book.createCellStyle();
+        HSSFDataFormat format3= book.createDataFormat();
+        cellStyleInt.setDataFormat(format3.getFormat("0"));
+        //创建会计格式
+        HSSFCellStyle cellStyleB = book.createCellStyle();
+        HSSFDataFormat format4= book.createDataFormat();
+        cellStyleB.setDataFormat(format.getFormat("_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ "));
+
         for(int a=0;a<stre.length;a++)
         {
             child=stre[a].split(",");
@@ -772,27 +792,22 @@ public class activity {
                 int columnCount=res.getMetaData().getColumnCount();
                 String str=null;
                 HSSFRow readrow;
-                //创建格式
-                HSSFCellStyle cellStyle = book.createCellStyle();
-                HSSFDataFormat format= book.createDataFormat();
-                cellStyle.setDataFormat(format.getFormat("_ ¥* #,##0.00_ ;_ ¥* -#,##0.00_ ;_ ¥* \"-\"??_ ;_ @_ "));
-                //设置为文本
-                HSSFCellStyle cellStyleText = book.createCellStyle();
-                HSSFDataFormat format2= book.createDataFormat();
-                cellStyleText.setDataFormat(format2.getFormat("@"));
                 int row=0;
                 String ColumnName="";
+                System.out.println("创建第"+a+"个表");
+                printStream.append("创建第"+a+"个表\r\n");
                 while(res.next())
                 {
                     readrow =mSheet.createRow(row);//创建行，从1开始
+                    System.out.println("创建第"+row+"行");
+                    printStream.append("创建第"+row+"行\r\n");
                     for(int i=1;i<=columnCount;i++)
                     {
                         ColumnName=res.getMetaData().getColumnName(i);
+
                         if(row==0)
                         {
                             str=res.getMetaData().getColumnName(i);
-                            System.out.println(str+"="+"第"+i+"列的名称是");
-
                             //创建一个表格的style
                             HSSFCellStyle style = book.createCellStyle();
                             style.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
@@ -816,27 +831,29 @@ public class activity {
                             //第二行开始
                             str=res.getString(i);
                             HSSFCell readcel1=readrow.createCell(i-1);
-                            System.out.println(ColumnName+"列名是=================================");
                             //str.matches("-?[0-9]+\\.?[0-9]*")
-                            if((!ColumnName.contains("时间"))&&(ColumnName.contains("应收款")||ColumnName.contains("完成率")||ColumnName.contains("额")||ColumnName.contains("任务")))
+                            if(ColumnName.contains("(元)"))
                             {
-                                //如果出现很多数字就设置为会计格式
+                                //如果出现数字就设置为会计格式
                                 readcel1.setCellStyle(cellStyle);
-                                System.out.println("是数字设置格式为会计格式");
-                                printStream.append("是数字设置格式为会计格式"+"\r\n");
-                                if(str.contains("%"))
-                                {
-                                    System.out.println("有百分号"+str.toString());
-                                    readcel1.setCellValue(nf.parse(str.toString()).doubleValue());//设置单元格内容
-                                }else{
+                                readcel1.setCellValue(Double.parseDouble(str.toString()));//设置单元格内容
 
-                                    readcel1.setCellValue(Double.parseDouble(str.toString()));//设置单元格内容
-                                }
-                            }else{
+                            }else if(ColumnName.contains("率"))
+                            {
+                                //如果出现数字就设置为会计格式
+                                readcel1.setCellStyle(cellStyleB);
+                                readcel1.setCellValue((Double)nf.parse(str.toString()).doubleValue());//设置单元格内容
+                            }
+                            else if(ColumnName.contains("(个)") )
+                            {
+                                readcel1.setCellStyle(cellStyleInt);
+                                readcel1.setCellValue(Double.parseDouble(str.toString()));//设置单元格内容
+                            }
+                            else{
 
-                                //readcel1.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
                                 readcel1.setCellStyle(cellStyleText);
                                 readcel1.setCellValue(str);//设置单元格内容
+
                             }
 
                         }
@@ -856,10 +873,12 @@ public class activity {
             fos.flush();
             TvAccessory.setText(writeXls.getPath());
             fos.close();
+
         } catch (IOException e) {
             // TODO 自动生成的 catch 块
             e.printStackTrace(printStream);
         }
 
     }
+
 }
