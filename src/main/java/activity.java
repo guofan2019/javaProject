@@ -253,7 +253,6 @@ public class activity {
             }
         });
         //设置发送数据
-
         //按钮 测试、启动、取消
         final JButton btTest=new JButton("发送测试");
         group.add(btTest);
@@ -302,14 +301,12 @@ public class activity {
             public void windowIconified(WindowEvent e) {
                 f.dispose(); //窗口最小化时dispose该窗口
             }
-
         });
         //设置软件在托盘上显示的图标
         Toolkit tk = Toolkit.getDefaultToolkit();
         Image img = tk.getImage("emailico.jpg");//*.gif与该类文件同一目录
         SystemTray systemTray = SystemTray.getSystemTray(); //获得系统托盘的实例
         TrayIcon trayIcon = null;
-
         try {
             trayIcon = new TrayIcon(img, "邮件自动发送小程序");
             systemTray.add(trayIcon); //设置托盘的图标，*.gif与该类文件同一目录
@@ -447,31 +444,24 @@ public class activity {
                         calendar.add(Calendar.YEAR, 1);
                     }
                 }
-
 //				TvRecyDate.setEditable(true);
 //				TvRecyDate_Time.setEditable(true);
                 JOptionPane.showMessageDialog(f, "插入执行计划成功", "提示消息", JOptionPane.WARNING_MESSAGE);
-
             }
         });
-
     }
     //初始化邮件
     public static void initEamil()
     {
         Properties properties = new Properties();
         properties.setProperty("mail.host","smtp.accbio.com.cn");
-
         properties.setProperty("mail.transport.protocol","smtp");
-
         properties.setProperty("mail.smtp.auth","true");
         MailSSLSocketFactory sf=null;
         try {
             sf = new MailSSLSocketFactory();
         } catch (GeneralSecurityException e) {
-
             e.printStackTrace(printStream);
-
         }
         sf.setTrustAllHosts(true);
         properties.put("mail.smtp.ssl.enable", "true");
@@ -485,14 +475,10 @@ public class activity {
         });
         //开启debug模式
         session.setDebug(true);
-
         //获取连接对象
-
         try {
             transport = session.getTransport();
-
         } catch (NoSuchProviderException e) {
-
             e.printStackTrace(printStream);
         }
         //连接服务器
@@ -502,7 +488,6 @@ public class activity {
             // TODO 自动生成的 catch 块
             e.printStackTrace(printStream);
         }
-
     }
 
     //发送邮件
@@ -513,7 +498,6 @@ public class activity {
         {
             initEamil();
         }
-
         try {
             mimeMessage = complexEmail(session,eamilAdd,acctss,titil,content);
         } catch (MessagingException e1) {
@@ -534,12 +518,10 @@ public class activity {
     }
     //连接数据库
     public static MimeMessage complexEmail(Session session,String eamilAdd,String acctss,String titil,String content) throws MessagingException {
-
         //消息的固定信息
         MimeMessage mimeMessage = new MimeMessage(session);
         //发件人
         mimeMessage.setFrom(new InternetAddress(myEamil));
-
         new InternetAddress();
         //收件人
         mimeMessage.setRecipients(Message.RecipientType.TO,InternetAddress.parse(eamilAdd));
@@ -554,7 +536,6 @@ public class activity {
         //准备文本
         MimeBodyPart text = new MimeBodyPart();
         text.setContent(content,"text/html;charset=utf-8");
-
         //拼装邮件正文
         MimeMultipart mimeMultipart = new MimeMultipart();
         //mimeMultipart.addBodyPart(image);
@@ -582,7 +563,6 @@ public class activity {
     public static void  recycleTask()
     {
         TimerTask task=new TimerTask(){
-
             String[] str;
             String sendDate,sendType;
             Date Date;
@@ -616,17 +596,13 @@ public class activity {
                     update(currentDate,"已发送");
                     TvLog.append(currentDate+"已发送\r\n");
                     System.out.println("修改发送标记|"+currentDate+"已发送");
-
                 }
-
             }
-
         };
         timer =new Timer();
         long delay=0;
         long period=1000;
         timer.scheduleAtFixedRate(task, 1000, 1000);
-
     }
     //连接数据库
     public static void connectSQL()
@@ -647,7 +623,6 @@ public class activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         //创建发送端
         System.out.println("链接成功！");
         //4、构造一个Statement对象,用来发送SQL的载体
@@ -659,9 +634,6 @@ public class activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-
     }
 
     //读取数据库
@@ -773,7 +745,6 @@ public class activity {
         HSSFCellStyle cellStyleB = book.createCellStyle();
         HSSFDataFormat format4= book.createDataFormat();
         cellStyleB.setDataFormat(format.getFormat("_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ "));
-
         for(int a=0;a<stre.length;a++)
         {
             child=stre[a].split(",");
